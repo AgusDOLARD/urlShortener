@@ -15,7 +15,7 @@ This is a simple URL shortener web application written in Go using the Fiber web
 POST /
 ```
 
-** Request Body: **
+**Request Body:**
 
 ```json
 {
@@ -23,7 +23,7 @@ POST /
 }
 ```
 
-** Response Body: **
+**Response Body:**
 
 ```json
 {
@@ -42,6 +42,6 @@ POST /
 GET /:slug
 ```
 
-** Response: **
+**Response:**
 
 The application will redirect to the full URL associated with the given slug.
