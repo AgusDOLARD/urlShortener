@@ -1,22 +1,24 @@
 package main
 
 import (
+	"log"
 	"urlShortener/controllers"
 	"urlShortener/initializers"
 
-	"github.com/gin-gonic/gin"
+	"github.com/gofiber/fiber/v2"
 )
 
 func init() {
 	initializers.ConnectToDB()
+	initializers.SyncDatabase()
 }
 
 func main() {
-	router := gin.Default()
+	router := fiber.New()
 
-	router.POST("/", controllers.URLCreate)
+	router.Post("/", controllers.URLCreate)
 
-	router.GET("/:slug", controllers.URLSolve)
+	router.Get("/:slug", controllers.URLSolve)
 
-	router.Run(":3000")
+	log.Fatal(router.Listen(":8080"))
 }

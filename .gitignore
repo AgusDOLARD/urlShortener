@@ -16,3 +16,4 @@ _test
 /go.mod
 /go.sum
 test.db
+urlShortener
