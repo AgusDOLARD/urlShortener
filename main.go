@@ -16,6 +16,8 @@ func init() {
 func main() {
 	router := fiber.New()
 
+	router.Static("/", "./public")
+
 	router.Post("/", controllers.URLCreate)
 
 	router.Get("/:slug", controllers.URLSolve)

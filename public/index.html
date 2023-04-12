@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>url shortener</title>
+    <script
+      src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"
+      defer
+    ></script>
+    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css" />
+  </head>
+
+  <body>
+    <h1>url shortener</h1>
+
+    <div x-data="{input:''}">
+      <form @submit.prevent="submitForm(input)">
+        <input required type="url" x-model="input" />
+        <button type="submit">-></button>
+      </form>
+
+      <ul>
+        <template x-for="res in $store.responses">
+          <li>
+            <a :href="res.new" x-text="res.new"></a>
+            <span> -> </span>
+            <a :href="res.full" x-text="res.full"></a>
+          </li>
+        </template>
+      </ul>
+    </div>
+
+    <script>
+      const submitForm = async (full) => {
+        try {
+          let rawRes = await fetch("/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ full }),
+          });
+          let resJson = await rawRes.json();
+          saveResponse(resJson);
+        } catch (err) {
+          alert(err);
+        }
+      };
+
+      const saveResponse = (response) => {
+        response.new = `${window.location.origin}/${response.slug}`;
+        Alpine.store("responses").unshift(response);
+        localStorage.setItem(
+          "responses",
+          JSON.stringify(Alpine.store("responses"))
+        );
+      };
+
+      document.addEventListener("alpine:init", () => {
+        const prevResponses = localStorage.getItem("responses");
+        responses = JSON.parse(prevResponses) || [];
+        Alpine.store("responses", responses);
+      });
+    </script>
+  </body>
+</html>
