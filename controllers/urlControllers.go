@@ -1,9 +1,9 @@
 package controllers
 
 import (
-	"net/url"
+	"net/http"
 
-	"github.com/AgusDOLARD/urlShortener/initializers"
+	"github.com/AgusDOLARD/urlShortener/database"
 	"github.com/AgusDOLARD/urlShortener/models"
 	"github.com/gofiber/fiber/v2"
 	"github.com/twharmon/gouid"
@@ -18,9 +18,9 @@ func URLSolve(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, "slug not provided")
 	}
 
-	initializers.DB.First(&u, "slug = ?", slug)
+	db.Instance.First(&u, "slug = ?", slug)
 	if u.ID == 0 {
-		return fiber.NewError(fiber.StatusBadRequest, "failed to find the slug")
+		return fiber.NewError(fiber.StatusBadRequest, "slug doesnt exists")
 	}
 
 	return c.Redirect(u.Full)
@@ -33,17 +33,17 @@ func URLCreate(c *fiber.Ctx) error {
 	var u models.URL
 
 	if err := c.BodyParser(&u); err != nil {
-		return err
+		return fiber.NewError(fiber.StatusBadRequest, "failed to parse body")
 	}
 
-	_, err := url.ParseRequestURI(u.Full)
+	_, err := http.Get(u.Full)
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, "failed to parse the url")
+		return fiber.NewError(fiber.StatusBadRequest, "invalid url")
 	}
 
 	u.Slug = gouid.String(6, gouid.MixedCaseAlphaNum)
 
-	res := initializers.DB.Create(&u)
+	res := db.Instance.Create(&u)
 	if res.Error != nil {
 		return fiber.NewError(fiber.StatusBadRequest, "failed to generate a new entry in the db")
 	}
