@@ -2,9 +2,9 @@ package main
 
 import (
 	"log"
-	"urlShortener/controllers"
-	"urlShortener/initializers"
 
+	"github.com/AgusDOLARD/urlShortener/controllers"
+	"github.com/AgusDOLARD/urlShortener/initializers"
 	"github.com/gofiber/fiber/v2"
 )
 
